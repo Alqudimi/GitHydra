@@ -1,0 +1,1 @@
+"""GitHydra - Git automation tool"""
