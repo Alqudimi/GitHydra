@@ -13,18 +13,23 @@ MAIN_MENU = {
         ('1', 'Initialize new repository', 'init'),
         ('2', 'Clone repository', 'sync clone'),
         ('3', 'Show status', 'status'),
+        ('4', 'Create archive', 'archive'),
+        ('5', 'Clean untracked files', 'clean'),
     ]),
     '2': ('File & Staging', [
         ('1', 'Stage files (interactive)', 'stage add --interactive'),
         ('2', 'Stage all files', 'stage add --all'),
         ('3', 'Unstage files', 'stage remove --all'),
         ('4', 'Show diff', 'stage diff'),
+        ('5', 'Show file blame', 'blame'),
     ]),
-    '3': ('Commits', [
+    '3': ('Commits & History', [
         ('1', 'Create commit', 'commit'),
         ('2', 'Amend last commit', 'commit --amend'),
         ('3', 'View commit log', 'log'),
         ('4', 'View log graph', 'log --graph'),
+        ('5', 'Show reflog', 'reflog show'),
+        ('6', 'Add note to commit', 'notes add'),
     ]),
     '4': ('Branches', [
         ('1', 'List branches', 'branch list'),
@@ -32,6 +37,7 @@ MAIN_MENU = {
         ('3', 'Switch branch', 'branch switch'),
         ('4', 'Delete branch', 'branch delete'),
         ('5', 'Merge branch', 'branch merge'),
+        ('6', 'Compare branches', 'compare branches'),
     ]),
     '5': ('Remote & Sync', [
         ('1', 'List remotes', 'remote list -v'),
@@ -39,6 +45,7 @@ MAIN_MENU = {
         ('3', 'Push to remote', 'sync push'),
         ('4', 'Pull from remote', 'sync pull'),
         ('5', 'Fetch updates', 'sync fetch'),
+        ('6', 'Compare with remote', 'compare with-remote'),
     ]),
     '6': ('Advanced Operations', [
         ('1', 'Stash changes', 'stash save'),
@@ -48,15 +55,52 @@ MAIN_MENU = {
         ('5', 'List tags', 'tag list'),
         ('6', 'Reset changes', 'reset'),
         ('7', 'Cherry-pick commit', 'cherry-pick'),
+        ('8', 'Start rebase', 'rebase start'),
     ]),
-    '7': ('Maintenance & Repair', [
+    '7': ('Submodules & Worktrees', [
+        ('1', 'Add submodule', 'submodule add'),
+        ('2', 'Update submodules', 'submodule update'),
+        ('3', 'Submodule status', 'submodule status'),
+        ('4', 'Add worktree', 'worktree add'),
+        ('5', 'List worktrees', 'worktree list'),
+        ('6', 'Remove worktree', 'worktree remove'),
+    ]),
+    '8': ('Debugging & Search', [
+        ('1', 'Start bisect', 'bisect start'),
+        ('2', 'Mark commit good', 'bisect good'),
+        ('3', 'Mark commit bad', 'bisect bad'),
+        ('4', 'End bisect', 'bisect reset'),
+        ('5', 'File blame', 'blame'),
+    ]),
+    '9': ('Patches & Bundles', [
+        ('1', 'Create patch', 'patch create'),
+        ('2', 'Apply patch', 'patch apply'),
+        ('3', 'Format patches', 'patch format'),
+        ('4', 'Create bundle', 'bundle create'),
+        ('5', 'Verify bundle', 'bundle verify'),
+    ]),
+    'a': ('Conflicts & Merging', [
+        ('1', 'List conflicts', 'conflicts list'),
+        ('2', 'Show conflicts', 'conflicts show'),
+        ('3', 'Accept ours', 'conflicts ours'),
+        ('4', 'Accept theirs', 'conflicts theirs'),
+        ('5', 'Abort merge', 'conflicts abort'),
+    ]),
+    'b': ('Statistics & Analysis', [
+        ('1', 'Repository overview', 'stats overview'),
+        ('2', 'Contributor stats', 'stats contributors'),
+        ('3', 'Activity stats', 'stats activity'),
+        ('4', 'File statistics', 'stats files'),
+        ('5', 'Language analysis', 'stats languages'),
+    ]),
+    'c': ('Maintenance & Repair', [
         ('1', 'Check repository integrity', 'repair fsck'),
         ('2', 'Optimize repository', 'repair gc'),
         ('3', 'Clean unused objects', 'repair prune'),
         ('4', 'Repair index', 'repair index'),
         ('5', 'Show repository info', 'repair info'),
     ]),
-    '8': ('Configuration', [
+    'd': ('Configuration', [
         ('1', 'List configuration', 'config list'),
         ('2', 'Set configuration', 'config set'),
         ('3', 'List aliases', 'alias list'),
@@ -68,11 +112,11 @@ def display_main_menu():
     """Display the main menu"""
     console.clear()
     
-    title = "[bold cyan]GitHydra - Interactive Git Manager[/bold cyan]"
+    title = "[bold cyan]GitHydra v3.0 - Interactive Git Manager[/bold cyan]"
     menu_content = "\n"
     
     for key, (category, _) in MAIN_MENU.items():
-        menu_content += f"[yellow]{key}[/yellow]. {category}\n"
+        menu_content += f"[yellow]{key.upper()}[/yellow]. {category}\n"
     
     menu_content += "[yellow]0[/yellow]. Exit\n"
     
@@ -102,8 +146,13 @@ def interactive_cmd():
         
         choice = questionary.text(
             "Enter your choice:",
-            validate=lambda x: x in [str(i) for i in range(9)]
+            validate=lambda x: x.lower() in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd']
         ).ask()
+        
+        if not choice:
+            continue
+        
+        choice = choice.lower()
         
         if choice == '0':
             print_success("Goodbye!")

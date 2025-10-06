@@ -4,13 +4,33 @@
 GitHydra is a powerful Python-based command-line tool that provides a beautiful, intuitive interface for managing all Git operations. Built with Rich for stunning terminal UI, Click for robust CLI framework, and GitPython for Git integration.
 
 ## Recent Changes
-- **2025-10-05**: Version 2.0 - Major Feature Update
-  - **Interactive Menu Interface**: Added menu-driven interface with numbered options for easy navigation
-  - **Repository Repair Tools**: fsck, gc, prune, index repair, and repository info commands
-  - **Stash Management**: Full stash support (save, list, apply, pop, drop, clear)
-  - **Tag Management**: Create, list, delete, and show tags with full annotation support
-  - **Advanced Operations**: reset (soft/mixed/hard), revert, cherry-pick, and enhanced diff
-  - All new features tested and working correctly
+- **2025-10-05**: Version 3.0 - Setup & Documentation
+  - **README.md**: Comprehensive bilingual documentation (English/Arabic)
+  - **pyproject.toml**: Modern Python packaging configuration
+  - **requirements.txt**: Clean dependency list
+  - **LICENSE**: MIT License
+  - **QUICKSTART.md**: Quick start guide for users
+  - **Installation Scripts**: install.sh (Linux/Mac) and install.bat (Windows)
+  - **Package Installation**: Successfully tested `pip install -e .`
+  - **CLI Command**: `githydra` command now works system-wide
+  
+- **2025-10-05**: Version 3.0 - Massive Feature Expansion
+  - **Submodule Management**: Full submodule support (add, init, update, status, sync, foreach, deinit)
+  - **Worktree Operations**: Multiple working trees (add, list, remove, prune, lock, unlock, move)
+  - **Reflog Management**: Reference log operations (show, expire, delete, exists)
+  - **Bisect for Debugging**: Binary search to find bugs (start, good, bad, skip, reset, log, visualize)
+  - **Blame Functionality**: Line-by-line authorship with statistics
+  - **Archive Creation**: Export repository snapshots in multiple formats (zip, tar, tar.gz)
+  - **Clean Operations**: Remove untracked files with interactive mode
+  - **Notes System**: Add annotations to commits (add, show, list, remove, edit, copy)
+  - **Patch Management**: Create, apply, and format patches for email submission
+  - **Statistics & Analytics**: Repository overview, contributor stats, activity analysis, file stats, language analysis
+  - **Conflict Resolution**: Helpers for merge conflicts (list, show, accept ours/theirs, abort, merge tool)
+  - **Interactive Rebase**: Advanced history rewriting (start, continue, skip, abort, squash)
+  - **Bundle Operations**: Repository transport via bundles (create, verify, list-heads, unbundle)
+  - **Branch Comparison**: Compare branches, commits, files, and with remote
+  - **Enhanced Interactive Menu**: Expanded to 13 categories with 70+ operations
+  - All new features integrated and ready for testing
   
 - **2025-10-05**: Initial development completed
   - Implemented all core Git operations (init, status, commit, branch, remote, log, stage, sync, config, alias)
@@ -25,6 +45,14 @@ GitHydra is a powerful Python-based command-line tool that provides a beautiful,
 ### Structure
 ```
 githydra.py              # Main entry point with CLI command groups
+pyproject.toml           # Python package configuration
+requirements.txt         # Dependencies list
+README.md                # Comprehensive documentation (English/Arabic)
+QUICKSTART.md            # Quick start guide
+LICENSE                  # MIT License
+MANIFEST.in              # Package manifest
+install.sh               # Linux/Mac installation script
+install.bat              # Windows installation script
 src/
   ├── commands/          # Command implementations
   │   ├── init.py        # Repository initialization
@@ -42,7 +70,21 @@ src/
   │   ├── reset.py       # Reset, revert, cherry-pick
   │   ├── diff.py        # Enhanced diff viewer
   │   ├── config.py      # Configuration management
-  │   └── alias.py       # Command aliases
+  │   ├── alias.py       # Command aliases
+  │   ├── submodule.py   # Submodule management
+  │   ├── worktree.py    # Worktree operations
+  │   ├── reflog.py      # Reflog management
+  │   ├── bisect.py      # Binary search debugging
+  │   ├── blame.py       # Line-by-line authorship
+  │   ├── archive.py     # Repository archiving
+  │   ├── clean.py       # Untracked file cleanup
+  │   ├── notes.py       # Commit annotations
+  │   ├── patch.py       # Patch management
+  │   ├── statistics.py  # Repository analytics
+  │   ├── conflicts.py   # Conflict resolution
+  │   ├── rebase.py      # Interactive rebase
+  │   ├── bundle.py      # Bundle operations
+  │   └── compare.py     # Branch/commit comparison
   ├── ui/
   │   └── console.py     # Rich UI components (panels, tables, trees, progress bars)
   ├── utils/
@@ -51,40 +93,58 @@ src/
 ```
 
 ### Key Features
-1. **Interactive Menu Interface**: Menu-driven interface with numbered options for easy navigation
-2. **Beautiful Terminal UI**: Rich library integration with colorized output, tables, panels, and progress indicators
-3. **Complete Git Coverage**: All essential Git commands with enhanced functionality
-4. **Repository Maintenance**: Integrity checks, optimization, and repair tools
-5. **Advanced Operations**: Stash management, tagging, reset, revert, cherry-pick
-6. **Interactive Experience**: Smart prompts, file selection, and visual diffs using Questionary
-7. **Professional Logging**: Comprehensive operation tracking saved to ~/.githydra/logs/
-8. **Configuration Management**: User preferences and Git settings via YAML
-9. **Smart Aliases**: Pre-configured and customizable command shortcuts
-10. **Error Resilience**: Handles edge cases like fresh repositories without HEAD
-11. **Modular Architecture**: Clean separation of concerns for easy maintenance and extension
+1. **Comprehensive Git Coverage**: 30+ command groups covering every Git operation
+2. **Interactive Menu Interface**: 13 categories with 70+ operations accessible via intuitive menu
+3. **Beautiful Terminal UI**: Rich library integration with colorized output, tables, panels, and progress indicators
+4. **Submodule & Worktree Management**: Full support for advanced repository structures
+5. **Debugging Tools**: Bisect for bug hunting, blame for authorship, reflog for history recovery
+6. **Repository Analytics**: Detailed statistics on contributors, activity, files, and languages
+7. **Conflict Resolution**: Comprehensive helpers for merge conflicts with interactive tools
+8. **Patch & Bundle Operations**: Professional workflows for code sharing and repository transport
+9. **Advanced History Rewriting**: Interactive rebase with squash, edit, and reorder
+10. **Branch Comparison**: Compare branches, commits, and track remote differences
+11. **Archive & Clean**: Export snapshots and maintain clean working directories
+12. **Commit Annotations**: Add notes and metadata to commits without changing history
+13. **Professional Logging**: Comprehensive operation tracking saved to ~/.githydra/logs/
+14. **Configuration Management**: User preferences and Git settings via YAML
+15. **Smart Aliases**: Pre-configured and customizable command shortcuts
+16. **Error Resilience**: Handles edge cases gracefully with helpful error messages
+17. **Modular Architecture**: Clean separation of concerns for easy maintenance and extension
+
+### Installation
+Install GitHydra using pip:
+```bash
+pip install -e .
+```
+
+Or use the installation scripts:
+```bash
+./install.sh          # Linux/Mac
+install.bat           # Windows
+```
 
 ### Usage
-Run GitHydra from the terminal:
+After installation, use the `githydra` command:
 
 **Interactive Mode (Recommended for beginners):**
 ```bash
-python githydra.py interactive
+githydra interactive
 ```
 
 **Command Line Mode:**
 ```bash
-python githydra.py --help
-python githydra.py init [path]
-python githydra.py status
-python githydra.py stage add --interactive
-python githydra.py commit -m "message"
-python githydra.py branch list
-python githydra.py log --graph
-python githydra.py sync push
-python githydra.py stash save -m "message"
-python githydra.py tag create v1.0
-python githydra.py repair info
-python githydra.py diff --cached
+githydra --help
+githydra init [path]
+githydra status
+githydra stage add --interactive
+githydra commit -m "message"
+githydra branch list
+githydra log --graph
+githydra sync push
+githydra stash save -m "message"
+githydra tag create v1.0
+githydra repair info
+githydra diff --cached
 ```
 
 ### Dependencies

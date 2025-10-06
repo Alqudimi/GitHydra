@@ -8,11 +8,13 @@ import sys
 from src.ui.console import console
 from src.commands import (init, status, branch, commit, remote, log, stage, 
                           config, alias, sync, interactive, repair, stash, 
-                          tag, reset, diff)
+                          tag, reset, diff, submodule, worktree, reflog, bisect,
+                          blame, archive, clean, notes, patch, statistics,
+                          conflicts, rebase, bundle, compare)
 from src.logger import setup_logging
 
 @click.group(invoke_without_command=True)
-@click.version_option(version='2.0.0', prog_name='GitHydra')
+@click.version_option(version='3.0.0', prog_name='GitHydra')
 @click.pass_context
 def cli(ctx):
     """
@@ -47,6 +49,21 @@ cli.add_command(reset.cherry_pick_cmd)
 cli.add_command(diff.diff_cmd)
 cli.add_command(config.config_cmd)
 cli.add_command(alias.alias_cmd)
+
+cli.add_command(submodule.submodule_cmd)
+cli.add_command(worktree.worktree_cmd)
+cli.add_command(reflog.reflog_cmd)
+cli.add_command(bisect.bisect_cmd)
+cli.add_command(blame.blame_cmd)
+cli.add_command(archive.archive_cmd)
+cli.add_command(clean.clean_cmd)
+cli.add_command(notes.notes_cmd)
+cli.add_command(patch.patch_cmd)
+cli.add_command(statistics.stats_cmd)
+cli.add_command(conflicts.conflicts_cmd)
+cli.add_command(rebase.rebase_cmd)
+cli.add_command(bundle.bundle_cmd)
+cli.add_command(compare.compare_cmd)
 
 if __name__ == '__main__':
     cli()
