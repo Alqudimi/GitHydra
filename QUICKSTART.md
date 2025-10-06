@@ -138,6 +138,23 @@ githydra bisect good <commit>      # Mark known good commit
 
 ---
 
+## Developer / المطور
+
+**Name / الاسم:** Abdulaziz Alqudimi  
+**Email / البريد الإلكتروني:** eng7mi@gmail.com  
+**Repository / المستودع:** https://github.com/Alqudimi/GitHydra
+
+## Support / الدعم
+
+Need help? Contact us! / تحتاج مساعدة؟ تواصل معنا!
+
+- **Email / البريد الإلكتروني:** eng7mi@gmail.com
+- **GitHub Issues:** https://github.com/Alqudimi/GitHydra/issues
+
+---
+
 **Enjoy using GitHydra! 🎉**
 
 **استمتع باستخدام GitHydra! 🎉**
+
+**Made with ❤️ by Abdulaziz Alqudimi**

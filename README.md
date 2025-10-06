@@ -413,28 +413,50 @@ githydra statistics activity      # تحليل النشاط
 - `aliases.yaml` - اختصارات الأوامر
 - `logs/` - سجلات العمليات حسب التاريخ
 
-### 🤝 المساهمة
+### 👨‍💻 Developer / المطور
+
+**Name / الاسم:** Abdulaziz Alqudimi  
+**Email / البريد الإلكتروني:** eng7mi@gmail.com  
+**Repository / المستودع:** https://github.com/Alqudimi/GitHydra
+
+### 🤝 Contributing / المساهمة
+
+Contributions are welcome! Feel free to submit issues or pull requests.
 
 المساهمات مرحب بها! لا تتردد في إرسال المشاكل أو طلبات السحب.
 
-### 📄 الترخيص
+### 📧 Contact / التواصل
+
+For questions, suggestions, or support:
+- **Email:** eng7mi@gmail.com
+- **GitHub Issues:** https://github.com/Alqudimi/GitHydra/issues
+
+للأسئلة أو الاقتراحات أو الدعم:
+- **البريد الإلكتروني:** eng7mi@gmail.com
+- **مشاكل GitHub:** https://github.com/Alqudimi/GitHydra/issues
+
+### 📄 License / الترخيص
+
+MIT License - Free to use and modify.
 
 ترخيص MIT - يمكنك الاستخدام والتعديل بحرية.
 
-### 🐛 الإبلاغ عن الأخطاء
+### 🐛 Bug Reports / الإبلاغ عن الأخطاء
 
-وجدت خطأ؟ يرجى فتح مشكلة مع:
-- إصدار GitHydra
-- إصدار Python
-- رسالة الخطأ
-- خطوات إعادة الإنتاج
+Found a bug? Please open an issue with:
+- GitHydra version / إصدار GitHydra
+- Python version / إصدار Python
+- Error message / رسالة الخطأ
+- Steps to reproduce / خطوات إعادة الإنتاج
 
 ---
 
 <div align="center">
 
-**Made with ❤️ for the Git community**
+**Made with ❤️ by Abdulaziz Alqudimi**
 
-**صُنع بـ ❤️ لمجتمع Git**
+**صُنع بـ ❤️ من عبدالعزيز القديمي**
+
+[GitHub](https://github.com/Alqudimi/GitHydra) | [Email](mailto:eng7mi@gmail.com)
 
 </div>
