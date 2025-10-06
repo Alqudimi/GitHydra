@@ -10,7 +10,7 @@ from githydra.src.commands import (init, status, branch, commit, remote, log, st
                           config, alias, sync, interactive, repair, stash, 
                           tag, reset, diff, submodule, worktree, reflog, bisect,
                           blame, archive, clean, notes, patch, statistics,
-                          conflicts, rebase, bundle, compare)
+                          conflicts, rebase, bundle, compare, cloud, project, team,template)
 from githydra.src.logger import setup_logging
 
 @click.group(invoke_without_command=True)
@@ -50,6 +50,7 @@ cli.add_command(diff.diff_cmd)
 cli.add_command(config.config_cmd)
 cli.add_command(alias.alias_cmd)
 
+cli.add_command(template.template_cmd)
 cli.add_command(submodule.submodule_cmd)
 cli.add_command(worktree.worktree_cmd)
 cli.add_command(reflog.reflog_cmd)
@@ -64,6 +65,9 @@ cli.add_command(conflicts.conflicts_cmd)
 cli.add_command(rebase.rebase_cmd)
 cli.add_command(bundle.bundle_cmd)
 cli.add_command(compare.compare_cmd)
+cli.add_command(cloud.cloud_cmd)
+cli.add_command(project.project_cmd)
+cli.add_command(team.team_cmd)
 
 if __name__ == '__main__':
     cli()
