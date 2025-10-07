@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}Stage & Commit - GitHydra{% endblock %}
+
+{% block content %}
+<div class="space-y-8 fade-in-up">
+    <div>
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
+            Stage & Commit
+        </h1>
+        <p class="text-gray-400">Stage your changes and create commits</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Unstaged Files -->
+        <div class="glass-card p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold">Unstaged Changes</h2>
+                <button onclick="stageAll()" class="btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Stage All
+                </button>
+            </div>
+            <div id="unstaged-files" class="space-y-2">
+                <div class="flex items-center justify-center py-8">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Staged Files -->
+        <div class="glass-card p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold">Staged Changes</h2>
+                <button onclick="unstageAll()" class="btn-secondary">
+                    <i class="fas fa-minus"></i>
+                    Unstage All
+                </button>
+            </div>
+            <div id="staged-files" class="space-y-2">
+                <div class="flex items-center justify-center py-8">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Commit Section -->
+    <div class="glass-card p-6">
+        <h2 class="text-2xl font-bold mb-6">Create Commit</h2>
+        <div class="space-y-4">
+            <textarea id="commit-message" class="input-field h-32 resize-none" placeholder="Enter commit message..."></textarea>
+            <div class="flex space-x-4">
+                <button onclick="createCommit()" class="btn-primary">
+                    <i class="fas fa-check"></i>
+                    Commit Changes
+                </button>
+                <button onclick="generateAICommitMessage()" class="btn-secondary">
+                    <i class="fas fa-robot"></i>
+                    Generate with AI
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadStageFiles() {
+    try {
+        const res = await fetch('/api/git/stage/files');
+        const data = await res.json();
+        
+        if (data.success) {
+            const unstagedHtml = [...data.data.unstaged, ...data.data.untracked].map(file => `
+                <div class="list-item flex items-center justify-between">
+                    <span class="flex items-center">
+                        <i class="fas fa-file mr-3 text-gray-400"></i>
+                        ${file}
+                    </span>
+                    <button onclick="stageFile('${file}')" class="icon-btn">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            `).join('');
+            
+            const stagedHtml = data.data.staged.map(file => `
+                <div class="list-item flex items-center justify-between">
+                    <span class="flex items-center">
+                        <i class="fas fa-file mr-3 text-primary"></i>
+                        ${file}
+                    </span>
+                    <button onclick="unstageFile('${file}')" class="icon-btn">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                </div>
+            `).join('');
+            
+            document.getElementById('unstaged-files').innerHTML = unstagedHtml || '<p class="text-gray-400 text-center py-4">No unstaged files</p>';
+            document.getElementById('staged-files').innerHTML = stagedHtml || '<p class="text-gray-400 text-center py-4">No staged files</p>';
+        }
+    } catch (error) {
+        showToast('Error loading files: ' + error.message, 'error');
+    }
+}
+
+async function stageFile(file) {
+    try {
+        const res = await fetch('/api/git/stage/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ files: [file] })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            loadStageFiles();
+        }
+    } catch (error) {
+        showToast('Error staging file: ' + error.message, 'error');
+    }
+}
+
+async function stageAll() {
+    try {
+        const res = await fetch('/api/git/stage/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ files: [] })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            loadStageFiles();
+        }
+    } catch (error) {
+        showToast('Error staging files: ' + error.message, 'error');
+    }
+}
+
+async function unstageFile(file) {
+    try {
+        const res = await fetch('/api/git/stage/reset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ files: [file] })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            loadStageFiles();
+        }
+    } catch (error) {
+        showToast('Error unstaging file: ' + error.message, 'error');
+    }
+}
+
+async function unstageAll() {
+    try {
+        const res = await fetch('/api/git/stage/reset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ files: [] })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            loadStageFiles();
+        }
+    } catch (error) {
+        showToast('Error unstaging files: ' + error.message, 'error');
+    }
+}
+
+async function createCommit() {
+    const message = document.getElementById('commit-message').value.trim();
+    
+    if (!message) {
+        showToast('Please enter a commit message', 'error');
+        return;
+    }
+    
+    try {
+        const res = await fetch('/api/git/commit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            document.getElementById('commit-message').value = '';
+            loadStageFiles();
+        } else {
+            showToast(data.error, 'error');
+        }
+    } catch (error) {
+        showToast('Error creating commit: ' + error.message, 'error');
+    }
+}
+
+async function generateAICommitMessage() {
+    try {
+        const res = await fetch('/api/ai/commit-message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            document.getElementById('commit-message').value = data.data.message;
+            showToast('AI commit message generated!', 'success');
+        } else {
+            showToast(data.error || 'AI feature unavailable', 'error');
+        }
+    } catch (error) {
+        showToast('Error generating message: ' + error.message, 'error');
+    }
+}
+
+loadStageFiles();
+</script>
+{% endblock %}

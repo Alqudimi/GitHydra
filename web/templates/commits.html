@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Commits - GitHydra{% endblock %}
+
+{% block content %}
+<div class="space-y-8 fade-in-up">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
+                Commit History
+            </h1>
+            <p class="text-gray-400">View your repository's commit history</p>
+        </div>
+        <div class="flex space-x-4">
+            <select id="limit-select" onchange="loadCommits()" class="input-field w-32">
+                <option value="20">20 commits</option>
+                <option value="50">50 commits</option>
+                <option value="100">100 commits</option>
+            </select>
+            <button onclick="loadCommits()" class="btn-primary">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="glass-card p-6">
+        <div id="commits-list" class="space-y-4">
+            <div class="flex items-center justify-center py-12">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadCommits() {
+    const limit = document.getElementById('limit-select').value;
+    try {
+        const res = await fetch(`/api/git/commits?limit=${limit}`);
+        const data = await res.json();
+        
+        if (data.success) {
+            const commitsHtml = data.data.map(commit => `
+                <div class="list-item">
+                    <div class="flex items-start justify-between flex-wrap gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <span class="badge badge-primary">${commit.sha}</span>
+                                <span class="text-lg font-semibold">${commit.message}</span>
+                            </div>
+                            <div class="text-sm text-gray-400 flex flex-wrap gap-4">
+                                <span><i class="fas fa-user mr-2"></i>${commit.author}</span>
+                                <span><i class="fas fa-envelope mr-2"></i>${commit.email}</span>
+                                <span><i class="fas fa-clock mr-2"></i>${new Date(commit.date).toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4 text-sm">
+                            <span class="text-green-400">+${commit.stats.insertions || 0}</span>
+                            <span class="text-red-400">-${commit.stats.deletions || 0}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('commits-list').innerHTML = commitsHtml || '<p class="text-gray-400 text-center py-8">No commits found</p>';
+        }
+    } catch (error) {
+        showToast('Error loading commits: ' + error.message, 'error');
+    }
+}
+
+loadCommits();
+</script>
+{% endblock %}

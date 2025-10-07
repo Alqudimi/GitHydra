@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Tags - GitHydra{% endblock %}
+
+{% block content %}
+<div class="space-y-8 fade-in-up">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
+                Tags
+            </h1>
+            <p class="text-gray-400">Manage repository tags and releases</p>
+        </div>
+    </div>
+
+    <div class="glass-card p-6">
+        <div id="tags-list" class="space-y-3">
+            <div class="flex items-center justify-center py-12">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadTags() {
+    try {
+        const res = await fetch('/api/git/tags');
+        const data = await res.json();
+        
+        if (data.success) {
+            const tagsHtml = data.data.map(tag => `
+                <div class="list-item">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-tag text-2xl text-primary"></i>
+                            <div>
+                                <div class="font-bold text-lg">${tag.name}</div>
+                                <div class="text-sm text-gray-400">Commit: ${tag.commit}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('tags-list').innerHTML = tagsHtml || '<p class="text-gray-400 text-center py-8">No tags found</p>';
+        }
+    } catch (error) {
+        showToast('Error loading tags: ' + error.message, 'error');
+    }
+}
+
+loadTags();
+</script>
+{% endblock %}

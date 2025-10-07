@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Branches - GitHydra{% endblock %}
+
+{% block content %}
+<div class="space-y-8 fade-in-up">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between flex-wrap gap-4">
+        <div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
+                Branches
+            </h1>
+            <p class="text-gray-400">Manage your repository branches</p>
+        </div>
+        <button onclick="showCreateBranchModal()" class="btn-primary">
+            <i class="fas fa-plus"></i>
+            New Branch
+        </button>
+    </div>
+
+    <!-- Branches List -->
+    <div class="glass-card p-6">
+        <div id="branches-list" class="space-y-3">
+            <div class="flex items-center justify-center py-12">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Branch Modal -->
+<div id="create-branch-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div class="glass-card p-8 max-w-md w-full mx-4">
+        <h3 class="text-2xl font-bold mb-6">Create New Branch</h3>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-gray-400 mb-2">Branch Name</label>
+                <input type="text" id="branch-name-input" class="input-field" placeholder="feature/new-feature">
+            </div>
+            <div class="flex items-center space-x-2">
+                <input type="checkbox" id="checkout-branch" class="w-4 h-4">
+                <label for="checkout-branch" class="text-gray-300">Switch to this branch after creation</label>
+            </div>
+            <div class="flex space-x-4">
+                <button onclick="createBranch()" class="btn-primary flex-1">
+                    <i class="fas fa-check"></i>
+                    Create
+                </button>
+                <button onclick="hideCreateBranchModal()" class="btn-secondary flex-1">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadBranches() {
+    try {
+        const res = await fetch('/api/git/branches');
+        const data = await res.json();
+        
+        if (data.success) {
+            const branchesHtml = data.data.branches.map(branch => `
+                <div class="list-item ${branch.current ? 'border-primary border-2' : ''}">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <i class="fas fa-code-branch text-2xl ${branch.current ? 'text-primary' : 'text-gray-400'}"></i>
+                            <div>
+                                <div class="font-bold text-lg">${branch.name}</div>
+                                ${branch.current ? '<span class="badge badge-success mt-1">Current</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            ${!branch.current ? `
+                                <button onclick="switchBranch('${branch.name}')" class="btn-primary">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    Switch
+                                </button>
+                                <button onclick="deleteBranch('${branch.name}')" class="btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('branches-list').innerHTML = branchesHtml || '<p class="text-gray-400 text-center py-8">No branches found</p>';
+        }
+    } catch (error) {
+        showToast('Error loading branches: ' + error.message, 'error');
+    }
+}
+
+function showCreateBranchModal() {
+    document.getElementById('create-branch-modal').classList.remove('hidden');
+    document.getElementById('create-branch-modal').classList.add('flex');
+}
+
+function hideCreateBranchModal() {
+    document.getElementById('create-branch-modal').classList.add('hidden');
+    document.getElementById('create-branch-modal').classList.remove('flex');
+    document.getElementById('branch-name-input').value = '';
+}
+
+async function createBranch() {
+    const name = document.getElementById('branch-name-input').value.trim();
+    const checkout = document.getElementById('checkout-branch').checked;
+    
+    if (!name) {
+        showToast('Please enter a branch name', 'error');
+        return;
+    }
+    
+    try {
+        const res = await fetch('/api/git/branches/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, checkout })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            hideCreateBranchModal();
+            loadBranches();
+        } else {
+            showToast(data.error, 'error');
+        }
+    } catch (error) {
+        showToast('Error creating branch: ' + error.message, 'error');
+    }
+}
+
+async function switchBranch(name) {
+    try {
+        const res = await fetch('/api/git/branches/switch', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            loadBranches();
+        } else {
+            showToast(data.error, 'error');
+        }
+    } catch (error) {
+        showToast('Error switching branch: ' + error.message, 'error');
+    }
+}
+
+async function deleteBranch(name) {
+    if (!confirm(`Are you sure you want to delete branch "${name}"?`)) return;
+    
+    try {
+        const res = await fetch('/api/git/branches/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, force: false })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            loadBranches();
+        } else {
+            showToast(data.error, 'error');
+        }
+    } catch (error) {
+        showToast('Error deleting branch: ' + error.message, 'error');
+    }
+}
+
+loadBranches();
+</script>
+{% endblock %}

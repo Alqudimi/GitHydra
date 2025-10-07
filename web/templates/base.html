@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GitHydra - Modern Git Management{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        accent: '#ec4899',
+                        dark: '#0f172a',
+                        'dark-light': '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-dark via-dark-light to-dark min-h-screen text-white">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-nav backdrop-blur-xl bg-dark/50 border-b border-white/10">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="flex items-center space-x-3 hover:scale-105 transition-transform">
+                        <div class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center rotating-gradient">
+                            <i class="fas fa-code-branch text-white text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">GitHydra</span>
+                    </a>
+                    
+                    <div class="hidden md:flex space-x-1">
+                        <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                            <i class="fas fa-home mr-2"></i>Dashboard
+                        </a>
+                        <a href="/branches" class="nav-link {% if request.path == '/branches' %}active{% endif %}">
+                            <i class="fas fa-code-branch mr-2"></i>Branches
+                        </a>
+                        <a href="/commits" class="nav-link {% if request.path == '/commits' %}active{% endif %}">
+                            <i class="fas fa-history mr-2"></i>Commits
+                        </a>
+                        <a href="/stage" class="nav-link {% if request.path == '/stage' %}active{% endif %}">
+                            <i class="fas fa-plus-circle mr-2"></i>Stage
+                        </a>
+                        <a href="/analytics" class="nav-link {% if request.path == '/analytics' %}active{% endif %}">
+                            <i class="fas fa-chart-line mr-2"></i>Analytics
+                        </a>
+                        <a href="/ai-tools" class="nav-link {% if request.path == '/ai-tools' %}active{% endif %}">
+                            <i class="fas fa-robot mr-2"></i>AI Tools
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="icon-btn">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="icon-btn mobile-menu-btn md:hidden">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <a href="/settings" class="icon-btn">
+                        <i class="fas fa-cog"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div class="mobile-menu hidden md:hidden mt-4 pb-4">
+                <div class="flex flex-col space-y-2">
+                    <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="/branches" class="nav-link {% if request.path == '/branches' %}active{% endif %}">
+                        <i class="fas fa-code-branch mr-2"></i>Branches
+                    </a>
+                    <a href="/commits" class="nav-link {% if request.path == '/commits' %}active{% endif %}">
+                        <i class="fas fa-history mr-2"></i>Commits
+                    </a>
+                    <a href="/stage" class="nav-link {% if request.path == '/stage' %}active{% endif %}">
+                        <i class="fas fa-plus-circle mr-2"></i>Stage
+                    </a>
+                    <a href="/stash" class="nav-link {% if request.path == '/stash' %}active{% endif %}">
+                        <i class="fas fa-archive mr-2"></i>Stash
+                    </a>
+                    <a href="/remotes" class="nav-link {% if request.path == '/remotes' %}active{% endif %}">
+                        <i class="fas fa-server mr-2"></i>Remotes
+                    </a>
+                    <a href="/tags" class="nav-link {% if request.path == '/tags' %}active{% endif %}">
+                        <i class="fas fa-tag mr-2"></i>Tags
+                    </a>
+                    <a href="/analytics" class="nav-link {% if request.path == '/analytics' %}active{% endif %}">
+                        <i class="fas fa-chart-line mr-2"></i>Analytics
+                    </a>
+                    <a href="/ai-tools" class="nav-link {% if request.path == '/ai-tools' %}active{% endif %}">
+                        <i class="fas fa-robot mr-2"></i>AI Tools
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="fixed bottom-8 right-8 z-50 space-y-4"></div>
+
+    <script src="/static/js/main.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

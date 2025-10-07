@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - GitHydra{% endblock %}
+
+{% block content %}
+<div class="space-y-8 fade-in-up">
+    <div>
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
+            Settings
+        </h1>
+        <p class="text-gray-400">Configure GitHydra preferences</p>
+    </div>
+
+    <!-- About -->
+    <div class="glass-card p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-info-circle mr-3 text-primary"></i>
+            About GitHydra
+        </h2>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <span class="text-gray-400">Version</span>
+                <span class="font-bold">3.0.0</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-400">License</span>
+                <span class="font-bold">MIT</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-400">Author</span>
+                <span class="font-bold">Abdulaziz Alqudimi</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shortcuts -->
+    <div class="glass-card p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-keyboard mr-3 text-primary"></i>
+            Keyboard Shortcuts
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex items-center justify-between p-3 bg-dark-light rounded-lg">
+                <span class="text-gray-400">Dashboard</span>
+                <span class="badge badge-primary">Ctrl + D</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-dark-light rounded-lg">
+                <span class="text-gray-400">Branches</span>
+                <span class="badge badge-primary">Ctrl + B</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-dark-light rounded-lg">
+                <span class="text-gray-400">Commits</span>
+                <span class="badge badge-primary">Ctrl + H</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-dark-light rounded-lg">
+                <span class="text-gray-400">Stage</span>
+                <span class="badge badge-primary">Ctrl + S</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Links -->
+    <div class="glass-card p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-link mr-3 text-primary"></i>
+            Quick Links
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a href="https://github.com/Alqudimi/GitHydra" target="_blank" class="btn-secondary text-center">
+                <i class="fab fa-github mr-2"></i>
+                GitHub
+            </a>
+            <a href="https://github.com/Alqudimi/GitHydra/issues" target="_blank" class="btn-secondary text-center">
+                <i class="fas fa-bug mr-2"></i>
+                Report Issues
+            </a>
+            <a href="https://github.com/Alqudimi/GitHydra/tree/main/docs" target="_blank" class="btn-secondary text-center">
+                <i class="fas fa-book mr-2"></i>
+                Documentation
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

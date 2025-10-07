@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Stash - GitHydra{% endblock %}
+
+{% block content %}
+<div class="space-y-8 fade-in-up">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
+                Stash Management
+            </h1>
+            <p class="text-gray-400">Save and manage your work in progress</p>
+        </div>
+        <button onclick="showStashModal()" class="btn-primary">
+            <i class="fas fa-save"></i>
+            Save Stash
+        </button>
+    </div>
+
+    <div class="glass-card p-6">
+        <div id="stash-list" class="space-y-3">
+            <div class="flex items-center justify-center py-12">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stash Modal -->
+<div id="stash-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div class="glass-card p-8 max-w-md w-full mx-4">
+        <h3 class="text-2xl font-bold mb-6">Save Stash</h3>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-gray-400 mb-2">Stash Message</label>
+                <input type="text" id="stash-message-input" class="input-field" placeholder="WIP: feature implementation">
+            </div>
+            <div class="flex space-x-4">
+                <button onclick="saveStash()" class="btn-primary flex-1">
+                    <i class="fas fa-save"></i>
+                    Save
+                </button>
+                <button onclick="hideStashModal()" class="btn-secondary flex-1">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadStash() {
+    try {
+        const res = await fetch('/api/git/stash');
+        const data = await res.json();
+        
+        if (data.success) {
+            const stashHtml = data.data.map(stash => `
+                <div class="list-item">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="font-semibold mb-1">${stash.message}</div>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-clock mr-2"></i>${new Date(stash.date).toLocaleString()}
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <span class="badge badge-primary">stash@{${stash.index}}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('stash-list').innerHTML = stashHtml || '<p class="text-gray-400 text-center py-8">No stashes found</p>';
+        }
+    } catch (error) {
+        showToast('Error loading stash: ' + error.message, 'error');
+    }
+}
+
+function showStashModal() {
+    document.getElementById('stash-modal').classList.remove('hidden');
+    document.getElementById('stash-modal').classList.add('flex');
+}
+
+function hideStashModal() {
+    document.getElementById('stash-modal').classList.add('hidden');
+    document.getElementById('stash-modal').classList.remove('flex');
+    document.getElementById('stash-message-input').value = '';
+}
+
+async function saveStash() {
+    const message = document.getElementById('stash-message-input').value.trim() || 'WIP';
+    
+    try {
+        const res = await fetch('/api/git/stash/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            showToast(data.message, 'success');
+            hideStashModal();
+            loadStash();
+        } else {
+            showToast(data.error, 'error');
+        }
+    } catch (error) {
+        showToast('Error saving stash: ' + error.message, 'error');
+    }
+}
+
+loadStash();
+</script>
+{% endblock %}

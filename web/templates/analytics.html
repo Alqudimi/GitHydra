@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - GitHydra{% endblock %}
+
+{% block content %}
+<div class="space-y-8 fade-in-up">
+    <div>
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
+            Analytics & Insights
+        </h1>
+        <p class="text-gray-400">Comprehensive repository analytics and team insights</p>
+    </div>
+
+    <!-- Code Insights -->
+    <div class="glass-card p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-code mr-3 text-primary"></i>
+            Code Distribution
+        </h2>
+        <div id="code-insights" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="flex items-center justify-center py-8">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Analytics -->
+    <div class="glass-card p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-users mr-3 text-primary"></i>
+            Team Contributors
+        </h2>
+        <div id="team-analytics" class="space-y-3">
+            <div class="flex items-center justify-center py-8">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weekly Activity -->
+    <div class="glass-card p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-chart-line mr-3 text-primary"></i>
+            Weekly Activity Report
+        </h2>
+        <div id="weekly-activity" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="flex items-center justify-center py-8">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadAnalytics() {
+    try {
+        // Load code insights
+        const codeRes = await fetch('/api/analytics/code-insights');
+        const codeData = await codeRes.json();
+        
+        if (codeData.success) {
+            const insightsHtml = Object.entries(codeData.data.file_types).map(([ext, count]) => `
+                <div class="stat-card">
+                    <div class="text-3xl font-bold mb-2">${count}</div>
+                    <div class="text-gray-400 text-sm">${ext} files</div>
+                </div>
+            `).join('');
+            document.getElementById('code-insights').innerHTML = insightsHtml;
+        }
+        
+        // Load team analytics
+        const teamRes = await fetch('/api/analytics/team-analytics');
+        const teamData = await teamRes.json();
+        
+        if (teamData.success) {
+            const teamHtml = Object.entries(teamData.data).map(([author, stats]) => `
+                <div class="list-item">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="font-bold text-lg mb-2">${author}</div>
+                            <div class="text-sm text-gray-400">${stats.email}</div>
+                        </div>
+                        <div class="flex space-x-4 text-sm">
+                            <div class="text-center">
+                                <div class="font-bold text-primary">${stats.commits}</div>
+                                <div class="text-gray-400">Commits</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="font-bold text-green-400">+${stats.additions}</div>
+                                <div class="text-gray-400">Added</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="font-bold text-red-400">-${stats.deletions}</div>
+                                <div class="text-gray-400">Deleted</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('team-analytics').innerHTML = teamHtml;
+        }
+        
+        // Load weekly activity
+        const weeklyRes = await fetch('/api/analytics/weekly-report?weeks=1');
+        const weeklyData = await weeklyRes.json();
+        
+        if (weeklyData.success) {
+            const report = weeklyData.data;
+            const activityHtml = `
+                <div class="stat-card">
+                    <div class="text-3xl font-bold mb-2">${report.total_commits}</div>
+                    <div class="text-gray-400 text-sm">Commits</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-3xl font-bold text-green-400 mb-2">+${report.total_additions}</div>
+                    <div class="text-gray-400 text-sm">Lines Added</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-3xl font-bold text-red-400 mb-2">-${report.total_deletions}</div>
+                    <div class="text-gray-400 text-sm">Lines Deleted</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-3xl font-bold mb-2">${Object.keys(report.authors).length}</div>
+                    <div class="text-gray-400 text-sm">Contributors</div>
+                </div>
+            `;
+            document.getElementById('weekly-activity').innerHTML = activityHtml;
+        }
+    } catch (error) {
+        showToast('Error loading analytics: ' + error.message, 'error');
+    }
+}
+
+loadAnalytics();
+</script>
+{% endblock %}

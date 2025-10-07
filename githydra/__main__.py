@@ -10,7 +10,8 @@ from githydra.src.commands import (init, status, branch, commit, remote, log, st
                           config, alias, sync, interactive, repair, stash, 
                           tag, reset, diff, submodule, worktree, reflog, bisect,
                           blame, archive, clean, notes, patch, statistics,
-                          conflicts, rebase, bundle, compare, cloud, project, team,template)
+                          conflicts, rebase, bundle, compare, cloud, project, team, template,
+                          analytics, ai_tools, web)
 from githydra.src.logger import setup_logging
 
 @click.group(invoke_without_command=True)
@@ -68,6 +69,9 @@ cli.add_command(compare.compare_cmd)
 cli.add_command(cloud.cloud_cmd)
 cli.add_command(project.project_cmd)
 cli.add_command(team.team_cmd)
+cli.add_command(analytics.analytics)
+cli.add_command(ai_tools.ai)
+cli.add_command(web.web_cmd)
 
 if __name__ == '__main__':
     cli()

@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}AI Tools - GitHydra{% endblock %}
+
+{% block content %}
+<div class="space-y-8 fade-in-up">
+    <div>
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
+            AI-Powered Tools
+        </h1>
+        <p class="text-gray-400">Leverage AI to enhance your development workflow</p>
+    </div>
+
+    <!-- Code Review -->
+    <div class="glass-card p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-search mr-3 text-primary"></i>
+            Code Review
+        </h2>
+        <div class="space-y-4">
+            <textarea id="review-code-input" class="input-field h-48 resize-none font-mono text-sm" placeholder="Paste your code here for AI review..."></textarea>
+            <button onclick="reviewCode()" class="btn-primary">
+                <i class="fas fa-robot"></i>
+                Review Code
+            </button>
+            <div id="review-result" class="hidden mt-4 p-4 bg-dark-light rounded-xl border border-white/10">
+                <h3 class="font-bold mb-2">Review Results:</h3>
+                <div id="review-content" class="text-gray-300"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bug Detection -->
+    <div class="glass-card p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-bug mr-3 text-primary"></i>
+            Bug Detection
+        </h2>
+        <div class="space-y-4">
+            <textarea id="bug-code-input" class="input-field h-48 resize-none font-mono text-sm" placeholder="Paste your code here to detect bugs..."></textarea>
+            <button onclick="detectBugs()" class="btn-primary">
+                <i class="fas fa-robot"></i>
+                Detect Bugs
+            </button>
+            <div id="bugs-result" class="hidden mt-4 p-4 bg-dark-light rounded-xl border border-white/10">
+                <h3 class="font-bold mb-2">Detected Issues:</h3>
+                <div id="bugs-content" class="text-gray-300"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Commit Message Generator -->
+    <div class="glass-card p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-comment mr-3 text-primary"></i>
+            Smart Commit Messages
+        </h2>
+        <p class="text-gray-400 mb-4">Generate intelligent commit messages based on your staged changes</p>
+        <button onclick="generateCommitMsg()" class="btn-primary">
+            <i class="fas fa-robot"></i>
+            Generate Commit Message
+        </button>
+        <div id="commit-msg-result" class="hidden mt-4 p-4 bg-dark-light rounded-xl border border-white/10">
+            <div id="commit-msg-content" class="text-gray-300"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function reviewCode() {
+    const code = document.getElementById('review-code-input').value.trim();
+    
+    if (!code) {
+        showToast('Please enter code to review', 'error');
+        return;
+    }
+    
+    try {
+        const res = await fetch('/api/ai/review-code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            document.getElementById('review-content').textContent = JSON.stringify(data.data, null, 2);
+            document.getElementById('review-result').classList.remove('hidden');
+            showToast('Code review completed!', 'success');
+        } else {
+            showToast(data.error || 'AI feature unavailable', 'error');
+        }
+    } catch (error) {
+        showToast('Error: ' + error.message, 'error');
+    }
+}
+
+async function detectBugs() {
+    const code = document.getElementById('bug-code-input').value.trim();
+    
+    if (!code) {
+        showToast('Please enter code to analyze', 'error');
+        return;
+    }
+    
+    try {
+        const res = await fetch('/api/ai/detect-bugs', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            document.getElementById('bugs-content').textContent = JSON.stringify(data.data, null, 2);
+            document.getElementById('bugs-result').classList.remove('hidden');
+            showToast('Bug detection completed!', 'success');
+        } else {
+            showToast(data.error || 'AI feature unavailable', 'error');
+        }
+    } catch (error) {
+        showToast('Error: ' + error.message, 'error');
+    }
+}
+
+async function generateCommitMsg() {
+    try {
+        const res = await fetch('/api/ai/commit-message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            document.getElementById('commit-msg-content').textContent = data.data.message;
+            document.getElementById('commit-msg-result').classList.remove('hidden');
+            showToast('Commit message generated!', 'success');
+        } else {
+            showToast(data.error || 'No staged changes or AI unavailable', 'error');
+        }
+    } catch (error) {
+        showToast('Error: ' + error.message, 'error');
+    }
+}
+</script>
+{% endblock %}

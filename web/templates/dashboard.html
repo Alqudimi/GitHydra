@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - GitHydra{% endblock %}
+
+{% block content %}
+<div class="space-y-8 fade-in-up">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
+                Dashboard
+            </h1>
+            <p class="text-gray-400">Welcome to your Git management center</p>
+        </div>
+        <button onclick="refreshDashboard()" class="btn-primary">
+            <i class="fas fa-sync-alt"></i>
+            Refresh
+        </button>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-code-branch"></i>
+            </div>
+            <div class="text-2xl font-bold mb-1" id="branch-name">Loading...</div>
+            <div class="text-gray-400 text-sm">Current Branch</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-history"></i>
+            </div>
+            <div class="text-2xl font-bold mb-1" id="commit-count">0</div>
+            <div class="text-gray-400 text-sm">Total Commits</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-file-code"></i>
+            </div>
+            <div class="text-2xl font-bold mb-1" id="staged-count">0</div>
+            <div class="text-gray-400 text-sm">Staged Files</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="text-2xl font-bold mb-1" id="unstaged-count">0</div>
+            <div class="text-gray-400 text-sm">Unstaged Changes</div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Recent Commits -->
+        <div class="glass-card p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold flex items-center">
+                    <i class="fas fa-history mr-3 text-primary"></i>
+                    Recent Commits
+                </h2>
+                <a href="/commits" class="text-primary hover:text-accent transition">View All →</a>
+            </div>
+            <div id="recent-commits" class="space-y-3">
+                <div class="flex items-center justify-center py-8">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Repository Status -->
+        <div class="glass-card p-6">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <i class="fas fa-info-circle mr-3 text-primary"></i>
+                Repository Status
+            </h2>
+            <div class="space-y-4" id="repo-status">
+                <div class="flex items-center justify-center py-8">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weekly Report -->
+    <div class="glass-card p-6">
+        <h2 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-chart-bar mr-3 text-primary"></i>
+            Weekly Activity
+        </h2>
+        <div id="weekly-report" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="flex items-center justify-center py-8">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function loadDashboard() {
+    try {
+        // Load status
+        const statusRes = await fetch('/api/git/status');
+        const statusData = await statusRes.json();
+        
+        if (statusData.success) {
+            document.getElementById('branch-name').textContent = statusData.data.branch;
+            document.getElementById('staged-count').textContent = statusData.data.staged.length;
+            document.getElementById('unstaged-count').textContent = statusData.data.unstaged.length + statusData.data.untracked.length;
+            
+            // Display status
+            const statusHtml = `
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-400">Staged Files</span>
+                        <span class="badge badge-success">${statusData.data.staged.length}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-400">Unstaged Files</span>
+                        <span class="badge badge-danger">${statusData.data.unstaged.length}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-400">Untracked Files</span>
+                        <span class="badge badge-primary">${statusData.data.untracked.length}</span>
+                    </div>
+                </div>
+            `;
+            document.getElementById('repo-status').innerHTML = statusHtml;
+        }
+        
+        // Load commits
+        const commitsRes = await fetch('/api/git/commits?limit=5');
+        const commitsData = await commitsRes.json();
+        
+        if (commitsData.success) {
+            document.getElementById('commit-count').textContent = commitsData.data.length;
+            
+            const commitsHtml = commitsData.data.map(commit => `
+                <div class="list-item">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="font-semibold mb-1">${commit.message}</div>
+                            <div class="text-sm text-gray-400">
+                                <i class="fas fa-user mr-2"></i>${commit.author}
+                                <i class="fas fa-clock ml-4 mr-2"></i>${new Date(commit.date).toLocaleDateString()}
+                            </div>
+                        </div>
+                        <span class="badge badge-primary">${commit.sha}</span>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('recent-commits').innerHTML = commitsHtml || '<p class="text-gray-400 text-center">No commits yet</p>';
+        }
+        
+        // Load weekly report
+        const reportRes = await fetch('/api/analytics/weekly-report?weeks=1');
+        const reportData = await reportRes.json();
+        
+        if (reportData.success) {
+            const report = reportData.data;
+            const reportHtml = `
+                <div class="stat-card">
+                    <div class="text-3xl font-bold mb-2">${report.total_commits}</div>
+                    <div class="text-gray-400 text-sm">Commits</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-3xl font-bold text-green-400 mb-2">+${report.total_additions}</div>
+                    <div class="text-gray-400 text-sm">Lines Added</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-3xl font-bold text-red-400 mb-2">-${report.total_deletions}</div>
+                    <div class="text-gray-400 text-sm">Lines Deleted</div>
+                </div>
+                <div class="stat-card">
+                    <div class="text-3xl font-bold mb-2">${Object.keys(report.authors).length}</div>
+                    <div class="text-gray-400 text-sm">Contributors</div>
+                </div>
+            `;
+            document.getElementById('weekly-report').innerHTML = reportHtml;
+        }
+    } catch (error) {
+        showToast('Error loading dashboard: ' + error.message, 'error');
+    }
+}
+
+function refreshDashboard() {
+    loadDashboard();
+    showToast('Dashboard refreshed!', 'success');
+}
+
+loadDashboard();
+</script>
+{% endblock %}
