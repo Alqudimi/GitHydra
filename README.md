@@ -99,11 +99,12 @@ GitHydra is a powerful Python-based command-line tool that transforms Git into a
 #### Quick Install
 ```bash
 pip install -e .
+pip install githydra 
 ```
 
 #### Manual Installation
 ```bash
-git clone <repository-url>
+git clone https://github.com/Alqudimi/GitHydra.git
 cd githydra
 pip install -r requirements.txt
 ```
@@ -321,11 +322,12 @@ GitHydra هي أداة قوية مبنية على Python لإدارة Git بوا
 #### التثبيت السريع
 ```bash
 pip install -e .
+pip install githydra 
 ```
 
 #### التثبيت اليدوي
 ```bash
-git clone <repository-url>
+git clone https://github.com/Alqudimi/GitHydra.git
 cd githydra
 pip install -r requirements.txt
 ```
