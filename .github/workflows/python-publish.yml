@@ -1,0 +1,95 @@
+name: Publish GitHydra to PyPI
+
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-verify:
+    name: Build & Verify Version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Upgrade pip and install build tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build setuptools wheel
+
+      - name: Show Python & pip info
+        run: |
+          python --version
+          pip --version
+
+      - name: Extract tag and package version & compare
+        env:
+          GITHUB_REF: ${{ github.ref }}
+        run: |
+          set -e
+          TAG=${GITHUB_REF#refs/tags/}
+          echo "Detected tag: $TAG"
+          # استخراج __version__ من githydra/__init__.py
+          if [ ! -f "githydra/__init__.py" ]; then
+            echo "ERROR: githydra/__init__.py not found!"
+            exit 1
+          fi
+          PKG_VER=$(python - <<'PY'
+import re, pathlib
+p = pathlib.Path("githydra") / "__init__.py"
+s = p.read_text(encoding="utf-8")
+m = re.search(r"__version__\\s*=\\s*['\\\"]([^'\\\"]+)['\\\"]", s)
+print(m.group(1) if m else "")
+PY
+)
+          echo "Package version: $PKG_VER"
+          
+          if [ "$TAG" != "v$PKG_VER" ]; then
+            echo "Tag and package version mismatch: tag=$TAG vs package=$PKG_VER"
+            exit 1
+          fi
+          echo "Version check OK (tag matches package version)."
+
+      - name: Build distributions
+        run: |
+          python -m build
+          ls -l dist/
+
+  publish:
+    name: Publish to PyPI
+    needs: build-and-verify
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install runner deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build twine
+
+      - name: Build (again, in case workspace started fresh)
+        run: python -m build
+
+      - name: Publish to PyPI (using pypa action)
+        uses: pypa/gh-action-pypi-publish@v1.9.0
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
