@@ -9,7 +9,7 @@
 <h1 align="center">GitHydra</h1>
 
 <p align="center">
-  وصف قوي وجذاب لمشروعك في جملة أو اثنتين. is a powerful Python-based command-line tool that transforms Git into an intuitive, beautiful experience. Built with Rich for stunning terminal UI, Click for robust CLI framework, and GitPython for seamless Git integration.
+  . is a powerful Python-based command-line tool that transforms Git into an intuitive, beautiful experience. Built with Rich for stunning terminal UI, Click for robust CLI framework, and GitPython for seamless Git integration.
   <br />
   <a href="https://github.com/Alqudimi/GitHydra/doc"><strong>استكشف الوثائق »</strong></a>
   <br />
