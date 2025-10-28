@@ -1,4 +1,35 @@
-# GitHydra 🐍
+# GitHydra 
+
+<p align="center">
+  <a href="https://github.com/Alqudimi/GitHydra">
+    <img src="assets/images/logo.png" alt="شعار المشروع" width="450" height="450">
+  </a>
+</p>
+
+<h1 align="center">GitHydra</h1>
+
+<p align="center">
+  وصف قوي وجذاب لمشروعك في جملة أو اثنتين. is a powerful Python-based command-line tool that transforms Git into an intuitive, beautiful experience. Built with Rich for stunning terminal UI, Click for robust CLI framework, and GitPython for seamless Git integration.
+  <br />
+  <a href="https://github.com/Alqudimi/GitHydra/doc"><strong>استكشف الوثائق »</strong></a>
+  <br />
+  <br />
+  <a href="https://github.com/Alqudimi/GitHydra/issues">الإبلاغ عن خطأ</a>
+  ·
+  <a href="https://github.com/Alqudimi/GitHydra/issues">طلب ميزة</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Alqudimi/GitHydra/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="الترخيص">
+  </a>
+  <a href="https://github.com/Abdulaziz/GitHydra/releases">
+    <img src="https://img.shields.io/badge/version-1.0.0-green.svg" alt="الإصدار">
+  </a>
+  <a href="https://github.com/Alqudimi/GitHydra/stargazers">
+    <img src="https://img.shields.io/github/stars/Alqudimi/GitHydra.svg?style=social" alt="النجوم">
+  </a>
+</p>
 
 <div align="center">
 
@@ -17,10 +48,6 @@
 ---
 
 ## <a name="english"></a>English Documentation
-
-### 🚀 Overview
-
-GitHydra is a powerful Python-based command-line tool that transforms Git into an intuitive, beautiful experience. Built with Rich for stunning terminal UI, Click for robust CLI framework, and GitPython for seamless Git integration.
 
 ### ✨ Features
 
